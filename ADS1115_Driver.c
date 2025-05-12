@@ -73,8 +73,7 @@ static int device_open_count = 0;
 #define ADS1115_IOCTL_MAGIC        'a'
 #define ADS1115_IOCTL_READ_CONFIG  _IOWR(ADS1115_IOCTL_MAGIC, 1, struct ADS1115_read_config)
 #define ADS1115_IOCTL_SET_THRESHOLDS _IOW(ADS1115_IOCTL_MAGIC, 2, struct ADS1115_thresh_config)
-#define ADS1115_IOCTL_READ_ALERT   _IOWR(ADS1115_IOCTL_MAGIC, 3, uint8_t) 
-
+//struct config
 struct ADS1115_read_config {
     uint8_t channel;
     uint16_t pga;
@@ -82,12 +81,12 @@ struct ADS1115_read_config {
     uint16_t datarate;
     int16_t result;
 };
-
+//struct ngưỡng
 struct ADS1115_thresh_config {
     int16_t low_threshold;
     int16_t high_threshold;
 };
-
+//hàm chọn channel
 static uint16_t get_channel_mux(uint8_t channel)
 {
     switch (channel) {
@@ -102,6 +101,7 @@ static uint16_t get_channel_mux(uint8_t channel)
         default: return ADS1115_MUX_AIN0_GND;
     }
 }
+//hàm config
 static int ADS1115_configure_and_read(struct ADS1115_read_config *cfg)
 {
     uint16_t config = 0;
@@ -109,7 +109,7 @@ static int ADS1115_configure_and_read(struct ADS1115_read_config *cfg)
     uint8_t conv_data[2];
     int ret;
     uint16_t raw_val;
-
+//thanh ghi
     config = ADS1115_REG_CONFIG_OS_IDLE |
          get_channel_mux(cfg->channel) |
          (cfg->pga & ADS1115_REG_CONFIG_PGA_MASK) |
@@ -149,6 +149,7 @@ static int ADS1115_configure_and_read(struct ADS1115_read_config *cfg)
 
     return 0;
 }
+//ham set ngưỡng
 static int ADS1115_set_thresholds(int16_t low_threshold, int16_t high_threshold)
 {
     uint8_t low_data[3];
