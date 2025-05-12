@@ -13,19 +13,19 @@
 
 /* Cấu trúc cấu hình ADC giống với bên kernel */
 struct ADS1115_read_config {
-    uint8_t channel;     // 0–3: AIN0–AIN3
-    uint16_t pga;        // ±2.048V → 0x0400
+    uint8_t channel;     // 0–7
+    uint16_t pga;        // pgapga
     uint16_t mode;       // liên tục hoặc single-shot
     uint16_t datarate;   // tốc độ mẫu
     int16_t result;      // giá trị ADC raw
 };
 
-/* Chuyển ADC raw → Volt */
+// Chuyển ADC raw → Volt 
 float convert_to_voltage(int16_t raw_adc, float pga_voltage) {
     return ((float)raw_adc / 32767.0f) * pga_voltage;
 }
 
-/* LM35: 10mV/°C = 0.01V/°C */
+// LM35: 10mV/°C = 0.01V/°C 
 float voltage_to_temperature(float voltage) {
     return voltage / 0.01f;
 }
@@ -35,14 +35,14 @@ int main() {
     struct ADS1115_read_config cfg;
     float voltage, temperature;
 
-    /* Mở thiết bị */
+    // Mở thiết bị 
     fd = open(ADS1115_DEVICE, O_RDWR);
     if (fd < 0) {
         perror("Failed to open ADS1115 device");
         return 1;
     }
 
-    /* Cấu hình */
+    // Cấu hình 
     cfg.channel = 1;                          // AIN0
     cfg.pga = 0x0400;                         // ±2.048V (ADS1115_PGA_2_048V)
     cfg.mode = 0x0000;                        // Chế độ liên tục (ADS1115_MODE_CONTINUOUS)
